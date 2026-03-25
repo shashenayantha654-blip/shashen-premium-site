@@ -670,24 +670,8 @@ showChannels();
   <h4 id="profileName" style="margin:0; font-size:18px; font-weight:bold; text-shadow:0 0 5px #000;">Shashen</h4>
   <p style="margin:5px 0; font-size:14px; color:#60a5fa;">Online</p>
   </div>
-script>
-// Toggle profile preview on click
-let profileBox = document.getElementById("profileBox");
-let profilePreview = document.getElementById("profilePreview");
 
-profileBox.addEventListener("click", ()=>{
-  profilePreview.style.display = (profilePreview.style.display === "none") ? "block" : "none";
-});
-
-// Optional: floating animation for profile circle
-let topProfilePic = document.getElementById("topProfilePic");
-let direction = 1;
-setInterval(()=>{
-  let top = parseInt(window.getComputedStyle(topProfilePic).top) || 0;
-  if(top >= 5) direction = -1;
-  if(top <= 0) direction = 1;
-  topProfilePic.style.top = (top + direction) + "px";
-}, 100);
+    
 <!-- ===== TIKTOK USERS SECTION (Premium Merged) ===== -->
 <div id="tiktokList" style="
     text-align:center; 
