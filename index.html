@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WhatsApp Channel Site – Supiri Design</title>
+<style>
+body{
+  font-family:Arial, sans-serif;
+  background:#0b1220;
+  color:white;
+  text-align:center;
+  margin:0;
+  padding:0;
+}
+
+/* ===== TITLE ===== */
+h1{
+  margin-top:30px;
+  font-size:28px;
+  color:#4f46e5;
+  text-shadow: 0 0 10px #4f46e5;
+}
+
+/* ===== INPUT BOX ===== */
+.input-box{
+  margin:20px auto;
+  max-width:400px;
+}
+
+input{
+  padding:10px;
+  width:70%;
+  border-radius:10px;
+  border:none;
+  margin:5px 0;
+}
+
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:12px;
+  background:#4f46e5;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  font-size:16px;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#4338ca;
+}
+
+/* ===== CHANNEL LIST ===== */
+.channel{
+  display:block;
+  background:#25D366;
+  padding:15px;
+  margin:10px auto;
+  border-radius:25px;
+  width:80%;
+  color:white;
+  text-decoration:none;
+  font-weight:bold;
+  font-size:18px;
+  transition:0.3s;
+}
+
+.channel:hover{
+  background:#1ebe57;
+  transform:scale(1.03);
+  box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* ===== CARD DESIGN ===== */
+.card{
+  margin:30px auto;
+  max-width:400px;
+  padding:30px 20px;
+  border-radius:25px;
+  background: linear-gradient(135deg, #1f1f2e, #2e2e4f);
+  box-shadow:0 10px 25px rgba(0,0,0,0.6);
+  border:2px solid #4f46e5;
+}
+</style>
+
+</head>
+<button onclick="openAdmin()" style="
+position:fixed;
+bottom:10px;
+right:10px;
+opacity:0.2;
+border:none;
+background:#000;
+color:white;
+padding:5px 10px;
+border-radius:10px;">
+⚙
+</button>
+<body>
+  <!-- ===== STANDALONE MODERN CLOCK ===== -->
+<div id="clock" style="
+  background: linear-gradient(135deg, #1e1e2f, #3a3a5f);
+  color: #ffffff;
+  font-size:36px;
+  font-weight:bold;
+  padding:25px 50px;
+  border-radius:25px;
+  width:fit-content;
+  margin:40px auto;
+  text-align:center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  font-family: 'Arial', sans-serif;
+  text-shadow: 0 0 10px #ffffff, 0 0 20px #a0a0ff;
+">
+  00:00:00
+</div>
+<div id="adminPanel" style="
+display:none;
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#111827;
+padding:20px;
+border-radius:20px;
+box-shadow:0 0 20px #4f46e5;
+text-align:center;
+color:white;
+z-index:999;
+">
+
+<h3>⚙ Admin Panel</h3>
+
+<input id="adminName" placeholder="Channel Name" style="margin:5px;padding:10px;border-radius:10px;border:none;"><br>
+<input id="adminLink" placeholder="Channel Link" style="margin:5px;padding:10px;border-radius:10px;border:none;"><br>
+
+<button onclick="addChannel()" style="
+margin-top:10px;
+padding:10px;
+border:none;
+border-radius:10px;
+background:#22c55e;
+color:white;
+cursor:pointer;">
+Add Channel
+</button>
+
+<br><br>
+
+<button onclick="closeAdmin()" style="
+padding:5px 10px;
+border:none;
+border-radius:10px;
+background:red;
+color:white;">
+Close
+</button>
+
+</div>
+<script>
+function closeAdmin(){
+  document.getElementById("adminPanel").style.display = "none";
+}
+</script>
+<script>
+function updateClock(){
+  const now = new Date();
+  let h = now.getHours().toString().padStart(2,'0');
+  let m = now.getMinutes().toString().padStart(2,'0');
+  let s = now.getSeconds().toString().padStart(2,'0');
+  document.getElementById('clock').innerText = `${h}:${m}:${s}`;
+}
+
+// Update every second
+setInterval(updateClock, 1000);
+updateClock(); // initial call
+</script>
+<!-- ===== PREMIUM DATE WIDGET ===== -->
+<div id="premiumDate" style="
+    position:fixed;
+    top:15px;
+    left:15px;
+    padding:15px 20px;
+    background: linear-gradient(135deg, #4f46e5, #8b5cf6);
+    color:white;
+    font-weight:bold;
+    font-family:Arial,sans-serif;
+    border-radius:25px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.6);
+    text-align:center;
+    z-index:999;
+    text-shadow:0 0 10px #000;
+    cursor:default;
+    transition:0.3s;
+">
+  📅 <span id="currentDate">Loading...</span>
+</div>
+
+<script>
+// ===== Premium Date Widget JS =====
+function updatePremiumDate(){
+    const now = new Date();
+
+    // Day, Month, Year
+    const day = now.getDate();
+    const month = now.toLocaleString('default', { month: 'short' });
+    const year = now.getFullYear();
+
+    // Weekday
+    const options = { weekday: 'short' };
+    const weekday = now.toLocaleDateString('en-US', options);
+
+    // Display format: Tue, 24 Mar 2026
+    document.getElementById("currentDate").innerText = `${weekday}, ${day} ${month} ${year}`;
+}
+
+// Update every second (optional, keeps it fresh)
+setInterval(updatePremiumDate, 1000);
+updatePremiumDate();
+</script>
+<!-- ===== ULTRA PREMIUM WELCOME HEADER ===== -->
+<div style="
+  position:relative;
+  padding:60px 20px;
+  text-align:center;
+  overflow:hidden;
+  border-bottom-left-radius:50px;
+  border-bottom-right-radius:50px;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  box-shadow:0 10px 30px rgba(0,0,0,0.6);
+">
+
+  <!-- GLASS OVERLAY -->
+  <div style="
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+  "></div>
+
+  <!-- FLOATING LIGHT BLOBS -->
+  <div style="position:absolute; width:200px; height:200px; border-radius:50%; background:#4f46e5; filter:blur(80px); top:-50px; left:-50px; animation:float 6s infinite;"></div>
+  <div style="position:absolute; width:150px; height:150px; border-radius:50%; background:#22d3ee; filter:blur(70px); bottom:-40px; right:20px; animation:float 8s infinite alternate;"></div>
+
+  <!-- CONTENT -->
+  <div style="position:relative; z-index:2;">
+
+    <!-- IMAGE WITH GLOW RING -->
+    <div style="
+      width:150px;
+      height:150px;
+      margin:0 auto 15px;
+      border-radius:50%;
+      padding:5px;
+      background: linear-gradient(90deg, #facc15, #4f46e5, #22d3ee);
+      animation: rotateRing 6s linear infinite;
+    ">
+      <img src="https://i.ibb.co/FkRpKcCF/Rashmika-Ofc.jpg"
+        style="
+          width:100%;
+          height:100%;
+          border-radius:50%;
+          object-fit:cover;
+          border:4px solid #0f172a;
+        ">
+    </div>
+
+    <!-- TITLE -->
+    <h1 style="
+      font-size:34px;
+      font-weight:bold;
+      margin:0;
+      background: linear-gradient(90deg, #facc15, #4f46e5, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textGlow 2s infinite alternate;
+    ">
+      Welcome To Shashen Official !
+    </h1>
+
+    <!-- SUBTEXT -->
+    <p style="
+      margin-top:10px;
+      font-size:15px;
+      color:#cbd5f5;
+      letter-spacing:1px;
+    ">
+      Discover👤 • Join✅ • Grow 🚀
+    </p>
+
+  </div>
+</div>
+
+<style>
+/* FLOAT BLOBS */
+@keyframes float {
+  0% {transform: translateY(0px);}
+  50% {transform: translateY(-20px);}
+  100% {transform: translateY(0px);}
+}
+
+/* GLOW TEXT */
+@keyframes textGlow {
+  0% { text-shadow:0 0 5px #facc15; }
+  50% { text-shadow:0 0 20px #22d3ee; }
+  100% { text-shadow:0 0 5px #4f46e5; }
+}
+
+/* ROTATING RING */
+@keyframes rotateRing {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+</style>
+
+<style>
+/* Floating animation for circles */
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(15deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+/* Fade in animation for text */
+@keyframes fadeIn {
+  to { opacity:1; }
+}
+
+</style>
+<!-- ===== ANIMATED VISITOR & CLICK COUNTER with Emoji ===== -->
+<div style="
+  text-align:center; 
+  margin:40px auto; 
+  max-width:400px; 
+  background:#1e1e2f; 
+  padding:40px 30px; 
+  border-radius:30px; 
+  color:white; 
+  box-shadow:0 8px 25px rgba(0,0,0,0.5);
+  border:2px solid #4f46e5;
+">
+
+  <h2 style="margin-bottom:20px; font-size:24px; font-weight:bold; color:#4f46e5; text-shadow:0 0 10px #4f46e5;">
+    👀 Visitors & Button Clicks
+  </h2>
+
+  <p id="visitCount" style="font-size:20px; margin:15px 0; color:#60a5fa; font-weight:bold; text-shadow:0 0 8px #60a5fa;">
+    Visitors: 0 🌱
+  </p>
+  <p id="clickCount" style="font-size:20px; margin:15px 0; color:#60a5fa; font-weight:bold; text-shadow:0 0 8px #60a5fa;">
+    Button Clicks: 0 😎
+  </p>
+    <button id="clickBtn" style="
+    padding:15px 35px; 
+    border:none; 
+    border-radius:25px; 
+    background:#4f46e5; 
+    color:white; 
+    font-weight:bold; 
+    cursor:pointer; 
+    font-size:18px;
+    box-shadow:0 5px 15px rgba(79,70,229,0.5);
+    transition:0.3s;
+  " 
+  onmouseover="this.style.background='#4338ca'" 
+  onmouseout="this.style.background='#4f46e5'">
+    Click Me
+  </button>
+<!-- ===== PURE SNOW EFFECT – SUPIRI ===== -->
+<style>
+.snowflake{
+  position: fixed;
+  top:-10px;
+  color:white;
+  font-size: 10px;
+  user-select: none;
+  z-index:9999;
+  pointer-events:none;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes fall{
+  0% {transform: translateY(0px);}
+  100% {transform: translateY(100vh);}
+}
+</style>
+<script>
+// ===== LOAD PROFILE FROM LOCALSTORAGE =====
+let name = localStorage.getItem("userName") || "User";
+let img = localStorage.getItem("userImg") || "https://i.ibb.co/FLKNKhBp/Rashmika-Ofc.jpg";
+document.getElementById("topProfilePic").src = img;
+document.getElementById("dropPic").src = img;
+document.getElementById("dropName").innerText = name;
+
+// ===== CHANNEL COUNT =====
+let channels = JSON.parse(localStorage.getItem("channels")) || [];
+document.getElementById("channelCount").innerText = "Channels: " + channels.length;
+
+// ===== DROPDOWN TOGGLE =====
+let box = document.getElementById("profileBox");
+let dropdown = document.getElementById("profileDropdown");
+box.addEventListener("click", ()=>{
+  if(dropdown.classList.contains("show")){
+    dropdown.classList.remove("show");
+    setTimeout(()=>dropdown.style.display="none", 300);
+  } else {
+    dropdown.style.display="block";
+    setTimeout(()=>dropdown.classList.add("show"), 10);
+  }
+});
+<a href="profile.html" style="display:block;margin-top:10px;padding:10px;border-radius:15px;background:#4f46e5;color:white;text-decoration:none;">Edit Profile</a>
+</script>
+<script>
+// ===== SNOW GENERATOR =====
+function createSnowflake(){
+  const snowflake = document.createElement("div");
+  snowflake.className = "snowflake";
+  snowflake.style.left = Math.random() * window.innerWidth + "px";
+  snowflake.style.opacity = Math.random();
+  snowflake.style.fontSize = (Math.random()*12 + 8) + "px";
+  snowflake.style.animationDuration = (Math.random()*5 + 5) + "s";
+  snowflake.innerText = "❄"; // snow emoji
+  document.body.appendChild(snowflake);
+
+  setTimeout(()=>{
+    snowflake.remove();
+  }, 10000);
+}
+
+// create multiple snowflakes continuously
+setInterval(createSnowflake, 200);
+</script>
+</div>
+
+<script>
+// ===== UTILITY: Emoji Levels =====
+function visitEmoji(count){
+  if(count < 5) return "🌱";
+  else if(count < 20) return "🌟";
+  else return "🔥";
+}
+function clickEmoji(count){
+  if(count < 5) return "😎";
+  else if(count < 20) return "🚀";
+  else return "🎉";
+}
+
+// ===== ANIMATED COUNTER =====
+function animateCount(id, target, emojiFunc){
+  let el = document.getElementById(id);
+  let current = 0;
+  let increment = Math.ceil(target / 100);
+  let interval = setInterval(()=>{
+    current += increment;
+    if(current >= target) current = target;
+    el.innerText = id === "visitCount" ? "Visitors: " + current + " " + emojiFunc(current) : "Button Clicks: " + current + " " + emojiFunc(current);
+    if(current >= target) clearInterval(interval);
+  }, 10);
+}
+
+// ===== VISITORS =====
+let visits = parseInt(localStorage.getItem('visits') || '0');
+visits += 1; // increment on page load
+localStorage.setItem('visits', visits);
+animateCount("visitCount", visits, visitEmoji);
+
+// ===== BUTTON CLICKS =====
+let clicks = parseInt(localStorage.getItem('clicks') || '0');
+animateCount("clickCount", clicks, clickEmoji);
+
+document.getElementById('clickBtn').addEventListener('click', function(){
+  clicks += 1;
+  localStorage.setItem('clicks', clicks);
+  animateCount("clickCount", clicks, clickEmoji);
+});
+</script>
+</script>
+<h1> Add Your WhatsApp Channel🔥</h1>
+
+<div class="input-box">
+  <input type="text" id="name" placeholder="Channel Name"><br>
+  <input type="text" id="link" placeholder="WhatsApp Channel Link"><br>
+  <button onclick="addChannel()">Add Channel</button>
+</div>
+<!-- ===== PREMIUM SEARCH BAR WITH BUTTON ===== -->
+<div style="text-align:center; margin:20px;">
+  <input type="text" id="channelSearch" placeholder="Type channel name..." style="
+      padding:12px 20px; 
+      width:70%; 
+      max-width:350px;
+      border-radius:30px; 
+      border:none;
+      box-shadow:0 5px 15px rgba(0,0,0,0.4);
+      background: linear-gradient(135deg, #f97316, #facc15); /* Search bar gradient */
+      color:#1f2937;  /* Text color */
+      font-weight:bold;
+      font-size:16px;
+      transition:0.3s;
+  " 
+  onfocus="this.style.boxShadow='0 0 20px #facc15'" 
+  onblur="this.style.boxShadow='0 5px 15px rgba(0,0,0,0.4)'">
+  
+  <button id="searchBtn" style="
+      padding:12px 20px;
+      border:none;
+      border-radius:25px;
+      background:#f97316;   /* Button color */
+      color:white;
+      font-weight:bold;
+      cursor:pointer;
+      margin-left:10px;
+      box-shadow:0 5px 15px rgba(0,0,0,0.4);
+      transition:0.3s;
+  " onmouseover="this.style.background='#ea580c'" onmouseout="this.style.background='#f97316'">
+      Search
+  </button>
+</div>
+
+<div id="channelList"></div>
+
+<script>
+// Channels array
+let channels = JSON.parse(localStorage.getItem("channels")) || [];
+
+// Show channels
+function showChannels(){
+  let list = document.getElementById("channelList");
+  list.innerHTML = "";
+
+  channels.forEach((ch, index)=>{
+    let reactCount = parseInt(localStorage.getItem("react_"+index) || "0");
+
+    list.innerHTML += `
+      <div class="channel-block" style="display:flex;justify-content:space-between;align-items:center; margin:10px auto; width:80%; background:#111827; padding:10px 15px; border-radius:25px; color:white; font-weight:bold; box-shadow:0 0 10px #4f46e5;">
+        <a href="${ch.link}" target="_blank" style="color:white; text-decoration:none; font-weight:bold;">${ch.name}</a>
+        <div>
+          <button onclick="addReact(${index})" style="padding:5px 12px; border:none; border-radius:15px; background:#4f46e5; color:white; cursor:pointer; margin-left:5px;">❤️ React</button>
+          <span id="reactCount${index}">${reactCount}</span>
+          <button onclick="deleteChannel(${index})" style="padding:5px 12px; border:none; border-radius:15px; background:#ef4444; color:white; cursor:pointer; margin-left:5px;">🗑️ Delete</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// Add channel
+function addChannel(){
+  let name = document.getElementById("name").value;
+  let link = document.getElementById("link").value;
+
+  if(name === "" || link === ""){
+    alert("Fill all fields!");
+    return;
+  }
+
+  channels.push({name, link});
+  localStorage.setItem("channels", JSON.stringify(channels));
+  showChannels();
+
+  document.getElementById("name").value="";
+  document.getElementById("link").value="";
+}
+
+// Add react
+function addReact(index){
+  let key = "react_"+index;
+  let count = parseInt(localStorage.getItem(key) || "0");
+  count += 1;
+  localStorage.setItem(key, count);
+  document.getElementById("reactCount"+index).innerText = count;
+}
+
+// Delete channel
+function deleteChannel(index){
+  if(confirm("Are you sure you want to delete this channel?")){
+    channels.splice(index, 1); // remove from array
+    localStorage.setItem("channels", JSON.stringify(channels));
+    localStorage.removeItem("react_"+index); // remove react count
+    showChannels(); // refresh list
+  }
+}
+
+// Initial display
+showChannels();
+</script>
+<!-- ===== CONTACT OWNER BLOCK ===== -->
+<div style="
+  background: linear-gradient(135deg, #3a3a5f, #1e1e2f);
+  padding:40px 30px;
+  max-width:400px;
+  margin:40px auto;
+  border-radius:30px;
+  text-align:center;
+  box-shadow:0 8px 25px rgba(0,0,0,0.5);
+">
+
+  <h2 style="color:white; font-size:24px; margin-bottom:20px; font-weight:bold; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">
+    📩 Contact Owner to publish your channel
+  </h2>
+
+  <a href="https://wa.me/94761160057" target="_blank" 
+     style="
+       display:inline-block;
+       background:#25D366;
+       color:white;
+       font-weight:bold;
+       padding:15px 35px;
+       border-radius:25px;
+       text-decoration:none;
+       font-size:18px;
+       box-shadow:0 5px 15px rgba(0,0,0,0.3);
+       transition:0.3s;
+     "
+     onmouseover="this.style.background='#1ebe57'" 
+     onmouseout="this.style.background='#25D366'">
+    Message Me
+  </a>
+</div>
+  </a>
+</div>
+</body>
+</html>
+</div>
+
+<style>
+/* BORDER GLOW */
+@keyframes borderGlow {
+  0% { box-shadow:0 0 15px #4f46e5; }
+  50% { box-shadow:0 0 30px #22d3ee; }
+  100% { box-shadow:0 0 15px #4f46e5; }
+}
+
+/* TEXT GLOW */
+@keyframes textGlow {
+  0% { text-shadow:0 0 5px #facc15; }
+  50% { text-shadow:0 0 15px #22d3ee; }
+  100% { text-shadow:0 0 5px #4f46e5; }
+}
+</style>
+<!-- ===== PREMIUM PROFILE PREVIEW ===== -->
+<div id="profileBox" style="position:fixed;top:15px;right:15px;cursor:pointer; z-index:999;">
+  <div style="position:relative;">
+    <img id="topProfilePic" src="https://i.ibb.co/FLKNKhBp/Rashmika-Ofc.jpg" 
+         style="width:50px;height:50px;border-radius:50%;border:2px solid #4f46e5;box-shadow:0 0 12px #4f46e5; transition:0.3s;">
+    
+    <!-- Online Dot -->
+    <div id="onlineDot" style="position:absolute;bottom:2px;right:2px;width:12px;height:12px;background:#22c55e;border-radius:50%;border:2px solid #0b1220;box-shadow:0 0 10px #22c55e;"></div>
+  </div>
+</div>
+<!-- Profile Preview Popup -->
+<div id="profilePreview" style="
+    display:none;
+    position:fixed;
+    top:70px;
+    right:10px;
+    width:200px;
+    padding:20px;
+    border-radius:25px;
+    background: linear-gradient(135deg, #4f46e5, #8b5cf6);
+    color:white;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.6);
+    font-family:Arial,sans-serif;
+    transition:0.3s;
+">
+  <img src="https://i.ibb.co/FLKNKhBp/Rashmika-Ofc.jpg" 
+       style="width:70px;height:70px;border-radius:50%;margin-bottom:10px; border:3px solid white; box-shadow:0 5px 15px rgba(0,0,0,0.4);">
+  <h4 id="profileName" style="margin:0; font-size:18px; font-weight:bold; text-shadow:0 0 5px #000;">Shashen</h4>
+  <p style="margin:5px 0; font-size:14px; color:#60a5fa;">Online</p>
+  </div>
+script>
+// Toggle profile preview on click
+let profileBox = document.getElementById("profileBox");
+let profilePreview = document.getElementById("profilePreview");
+
+profileBox.addEventListener("click", ()=>{
+  profilePreview.style.display = (profilePreview.style.display === "none") ? "block" : "none";
+});
+
+// Optional: floating animation for profile circle
+let topProfilePic = document.getElementById("topProfilePic");
+let direction = 1;
+setInterval(()=>{
+  let top = parseInt(window.getComputedStyle(topProfilePic).top) || 0;
+  if(top >= 5) direction = -1;
+  if(top <= 0) direction = 1;
+  topProfilePic.style.top = (top + direction) + "px";
+}, 100);
+<!-- ===== TIKTOK USERS SECTION (Premium Merged) ===== -->
+<div id="tiktokList" style="
+    text-align:center; 
+    margin-top:40px; 
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    padding:30px 20px; 
+    border-radius:40px; 
+    box-shadow:0 10px 25px rgba(0,0,0,0.5);
+    color:white;
+    font-weight:bold;
+    position:relative;
+    overflow:hidden;
+">
+
+    <h2 style="
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+        margin-bottom:25px;
+        font-size:26px;
+    ">📹 TikTok Users</h2>
+
+</div>
+
+<script>
+// ===== PREMIUM TIKTOK USERS ARRAY =====
+let tiktokUsers = [
+    {name:"Shashen", link:"https://www.tiktok.com/@shashen"},
+    {name:"Gayesh", link:"https://www.tiktok.com/@gayesh"},
+    {name:"Hashintha", link:"https://www.tiktok.com/@hashintha"},
+    {name:"Chamika", link:"https://www.tiktok.com/@chamika"},
+];
+
+// ===== PREMIUM DISPLAY FUNCTION =====
+function showTikTokUsers(){
+    let container = document.getElementById("tiktokList");
+    container.innerHTML = `<h2 style="text-shadow: 2px 2px 8px rgba(0,0,0,0.4); margin-bottom:25px; font-size:26px;">📹 TikTok Users</h2>`;
+
+    tiktokUsers.forEach((user, index) => {
+        container.innerHTML += `
+        <div style="
+            margin:12px auto;
+            max-width:320px;
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            padding:18px 25px;
+            border-radius:30px;
+            text-align:center;
+            color:white;
+            font-weight:bold;
+            box-shadow:0 8px 20px rgba(0,0,0,0.4);
+            transition:0.3s;">
+            <span style="display:block; margin-bottom:12px; font-size:18px;">📹 ${user.name}</span>
+            <button onclick="window.open('${user.link}', '_blank')" style="
+                padding:12px 30px;
+                border-radius:30px;
+                background: rgba(255,255,255,0.3);
+                color:white;
+                border:none;
+                font-weight:bold;
+                cursor:pointer;
+                font-size:16px;
+                transition:0.3s;
+                box-shadow:0 5px 15px rgba(0,0,0,0.3);"
+                onmouseover="this.style.background='rgba(255,255,255,0.5)'" 
+                onmouseout="this.style.background='rgba(255,255,255,0.3)'>
+                Visit TikTok
+            </button>
+        </div>`;
+    });
+}
+
+// ===== INITIAL DISPLAY =====
+showTikTokUsers();
+</script>
+</script>
+<!-- ===== PREMIUM CHANNEL FILTER BY CATEGORY ===== -->
+<div style="text-align:center; margin:20px;">
+  <select id="categoryFilter" style="
+      padding:12px 20px;
+      border-radius:30px;
+      border:none;
+      font-weight:bold;
+      font-size:16px;
+      cursor:pointer;
+      box-shadow:0 5px 15px rgba(0,0,0,0.4);
+      background: linear-gradient(135deg, #4f46e5, #8b5cf6);
+      color:white;
+      transition:0.3s;
+  " 
+  onfocus="this.style.boxShadow='0 0 20px #8b5cf6'" 
+  onblur="this.style.boxShadow='0 5px 15px rgba(0,0,0,0.4)'">
+      <option value="all">All Categories</option>
+      <option value="gaming">Gaming</option>
+      <option value="news">News</option>
+      <option value="topup">Free Fire Top Up</option>
+      <option value="boost">Channel Boost</option>
+      <option value="Dancing">explor</option>
+  </select>
+</div>
+
+<div id="channelList"></div>
+<!-- ===== TIKTOK PAGES – PREMIUM STYLE ===== -->
+<div id="tiktokList" style="margin-top:40px; text-align:center;">
+    <h2 style="color:#ff0050; text-shadow:0 0 8px rgba(0,0,0,0.3);">📹 TikTok Pages</h2>
+</div>
+
+<script>
+<script>
+// ===== CHANNEL DATA WITH CATEGORY =====
+let channels = [
+    {name:"Channel One",link:"https://whatsapp.com/channel/0029Vb7T5i20G0XkBgrwYx3V", category:"gaming"},
+    {name:"Channel Two", link:"https://whatsapp.com/channel/0029Vb6pLqx60eBcInZPmP3F", category:"news"},
+    {name:"Free Fire Top Up", link:"https://whatsapp.com/channel/0029Vb7a9bO6RGJKJbh4xR0F", category:"topup"},
+    {name:"Channel Boost", link:"https://whatsapp.com/channel/0029VbBaJg3CnA7v18HtdS2Q", category:"boost"},
+    {name:"Another Gaming Channel", link:"#", category:"gaming"}
+    {name:"Dancing", Dancin"ttps://whatsapp.com/channel/0029Vb7C9lc2UPBJdeVqPh0i", category:"Dancing"},
+];
+
+// ===== SHOW CHANNEL FUNCTION =====
+function showChannels(filterCategory="all"){
+    let list = document.getElementById("channelList");
+    list.innerHTML = "";
+
+    channels.forEach((ch, index)=>{
+        if(filterCategory === "all" || ch.category === filterCategory){
+            list.innerHTML += `
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin:10px auto;
+                width:80%;
+                max-width:500px;
+                background: linear-gradient(135deg, #111827, #1f2937);
+                padding:12px 18px;
+                border-radius:25px;
+                color:white;
+                font-weight:bold;
+                box-shadow:0 0 15px #4f46e5;
+                transition:0.3s;
+            ">
+                <span>${ch.name}</span>
+                <div>
+                    <a href="${ch.link}" target="_blank" style="
+                        padding:5px 12px;
+                        border:none;
+                        border-radius:15px;
+                        background:#4f46e5;
+                        color:white;
+                        text-decoration:none;
+                        margin-right:10px;
+                    ">Go</a>
+                    <button onclick="addReact(${index})" style="
+                        padding:5px 12px;
+                        border:none;
+                        border-radius:15px;
+                        background:#22c55e;
+                        color:white;
+                        cursor:pointer;
+                        transition:0.3s;
+                    ">❤️ React</button>
+                    <span id="reactCount${index}" style="margin-left:8px;">${parseInt(localStorage.getItem("react_"+index)||"0")}</span>
+                </div>
+            </div>
+            `;
+        }
+    });
+
+    if(list.innerHTML === ""){
+        list.innerHTML = `<p style="color:#f87171; font-weight:bold; margin-top:15px;">No channel found!</p>`;
+    }
+}
+
+// ===== REACT FUNCTION =====
+function addReact(index){
+    let key = "react_"+index;
+    let count = parseInt(localStorage.getItem(key) || "0");
+    count += 1;
+    localStorage.setItem(key, count);
+    document.getElementById("reactCount"+index).innerText = count;
+}
+
+// ===== INITIAL DISPLAY =====
+showChannels();
+
+// ===== CATEGORY FILTER CHANGE =====
+document.getElementById("categoryFilter").addEventListener("change", ()=>{
+    let selected = document.getElementById("categoryFilter").value;
+    showChannels(selected);
+});
+</script>
+<!-- ===== PREMIUM TIKTOK SECTION – Supiri Style ===== -->
+<div style="
+    text-align:center; 
+    margin:30px auto; 
+    max-width:400px; 
+    padding:40px 25px; 
+    background: linear-gradient(135deg, #ff0050, #fcb045);
+    border-radius:40px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.5);
+    color:white;
+    font-weight:bold;
+    position:relative;
+    overflow:hidden;
+">
+
+    <!-- Floating circles for style -->
+    <div style="
+        position:absolute; 
+        width:100px; 
+        height:100px; 
+        border-radius:50%; 
+        background:rgba(255,255,255,0.15); 
+        top:-20px; 
+        left:-20px; 
+        animation:float 6s ease-in-out infinite;
+    "></div>
+    <div style="
+        position:absolute; 
+        width:60px; 
+        height:60px; 
+        border-radius:50%; 
+        background:rgba(255,255,255,0.2); 
+        bottom:-15px; 
+        right:20px; 
+        animation:float 8s ease-in-out infinite alternate;
+    "></div>
+
+    <h2 style="
+        margin-bottom:20px; 
+        font-size:24px; 
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    ">📹 TikTok Page</h2>
+
+    <a href="https://www.tiktok.com/@shashen" target="_blank" style="
+        display:inline-block;
+        padding:15px 30px;
+        border-radius:30px;
+        background: rgba(255,255,255,0.25);
+        color:white;
+        text-decoration:none;
+        font-weight:bold;
+        font-size:18px;
+        transition:0.3s;
+        box-shadow:0 5px 15px rgba(0,0,0,0.3);
+    " 
+    onmouseover="this.style.background='rgba(255,255,255,0.4)'" 
+    onmouseout="this.style.background='rgba(255,255,255,0.25)'">
+        Visit TikTok
+    </a>
+
+</div>
+
+<style>
+@keyframes float{
+    0%,100%{ transform: translateY(0);}
+    50%{ transform: translateY(15px);}
+}
+</style>
+<!-- ===== ULTRA PREMIUM TOOLS – Supiri Style (Only 2 Tools) ===== -->
+<div style="
+  text-align:center;
+  margin:60px auto;
+  padding:35px 25px;
+  max-width:420px;
+  border-radius:30px;
+  background: linear-gradient(135deg, #1a1a2e, #2e2e4f);
+  box-shadow:0 0 25px rgba(79,70,229,0.6);
+  border:2px solid transparent;
+  animation: borderGlow 3s infinite alternate;
+">
+
+  <!-- TITLE -->
+  <h2 style="
+    font-size:28px;
+    font-weight:bold;
+    background: linear-gradient(90deg, #facc15, #4f46e5, #22d3ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom:25px;
+    animation: textGlow 2s infinite alternate;
+  ">
+    ✨ Premium Tools
+  </h2>
+
+  <!-- TOOLS LIST -->
+  <p style="
+    font-size:18px;
+    line-height:2;
+    color:#e5e7eb;
+    font-weight:bold;
+  ">
+    📍 Bank Transing ✅ <br>
+    📍 Ez Cash ✅
+  </p>
+
+  <!-- SMALL TEXT -->
+  <p style="
+    font-size:13px;
+    color:#9ca3af;
+    margin-top:15px;
+    letter-spacing:1px;
+  ">
+    ⚒ Powered by Shashen Ayantha
+  </p>
+
+</div>
+
+<style>
+@keyframes borderGlow {
+  0% { border-color: rgba(79,70,229,0.2); }
+  50% { border-color: rgba(79,70,229,0.6); }
+  100% { border-color: rgba(79,70,229,0.2); }
+}
+
+@keyframes textGlow {
+  0% { text-shadow: 0 0 5px #facc15, 0 0 10px #4f46e5; }
+  50% { text-shadow: 0 0 10px #facc15, 0 0 20px #22d3ee; }
+  100% { text-shadow: 0 0 5px #facc15, 0 0 10px #4f46e5; }
+}
+</style>
+<!-- ===== ULTRA PREMIUM TOOLS SECTION – Supiri Style ===== -->
+<div style="
+  text-align:center;
+  margin:60px auto;
+  padding:35px 25px;
+  max-width:420px;
+  border-radius:30px;
+  background: linear-gradient(135deg, #1a1a2e, #2e2e4f);
+  box-shadow:0 0 25px rgba(79,70,229,0.6);
+  border:2px solid transparent;
+  animation: borderGlow 3s infinite alternate;
+">
+
+  <!-- TITLE -->
+  <h2 style="
+    font-size:28px;
+    font-weight:bold;
+    background: linear-gradient(90deg, #facc15, #4f46e5, #22d3ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom:25px;
+    animation: textGlow 2s infinite alternate;
+  ">
+    ✨ Premium Tools
+  </h2>
+
+  <!-- TOOLS LIST -->
+  <p style="
+    font-size:17px;
+    line-height:2;
+    color:#e5e7eb;
+    font-weight:bold;
+  ">
+    📵 Channel Boost <br>
+    😎 Channel React <br>
+    👤 Channel Sell <br>
+    🇱🇰 Free Fire Top Up <br>
+    🌍 And More Features...
+  </p>
+
+  <!-- SMALL TEXT -->
+  <p style="
+    font-size:13px;
+    color:#9ca3af;
+    margin-top:15px;
+    letter-spacing:1px;
+  ">
+    Fast📉 • Secure🔒 • Trusted🔨 • No spam✅<br>
+             ⚒ Powered by Shashen Ayantha
+  </p>
+
+</div>
+
+<style>
+@keyframes borderGlow {
+  0% { border-color: rgba(79,70,229,0.2); }
+  50% { border-color: rgba(79,70,229,0.6); }
+  100% { border-color: rgba(79,70,229,0.2); }
+}
+
+@keyframes textGlow {
+  0% { text-shadow: 0 0 5px #facc15, 0 0 10px #4f46e5; }
+  50% { text-shadow: 0 0 10px #facc15, 0 0 20px #22d3ee; }
+  100% { text-shadow: 0 0 5px #facc15, 0 0 10px #4f46e5; }
+}
+</style>
+  <!-- BUTTON -->
+  <a href="https://wa.me/94761160057" target="_blank" style="
+    display:inline-block;
+    margin-top:25px;
+    padding:15px 35px;
+    border-radius:30px;
+    background: linear-gradient(90deg, #4f46e5, #22d3ee);
+    color:white;
+    font-weight:bold;
+    text-decoration:none;
+    font-size:17px;
+    box-shadow:0 0 15px rgba(79,70,229,0.8);
+    transition:0.3s;
+  "
+  onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 0 25px #22d3ee';"
+  onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 15px rgba(79,70,229,0.8)';">
+    Contact Owner
+  </a>
+<!-- ===== ULTRA PREMIUM TOOLS – Supiri Style (Only 2 Tools) ===== -->
+<div style="
+  text-align:center;
+  margin:60px auto;
+  padding:35px 25px;
+  max-width:420px;
+  border-radius:30px;
+  background: linear-gradient(135deg, #1a1a2e, #2e2e4f);
+  box-shadow:0 0 25px rgba(79,70,229,0.6);
+  border:2px solid transparent;
+  animation: borderGlow 3s infinite alternate;
+">
+
+  <!-- TITLE -->
+  <h2 style="
+    font-size:28px;
+    font-weight:bold;
+    background: linear-gradient(90deg, #facc15, #4f46e5, #22d3ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom:25px;
+    animation: textGlow 2s infinite alternate;
+  ">
+    ✨ Premium Tools
+  </h2>
+
+  <!-- TOOLS LIST -->
+  <p style="
+    font-size:18px;
+    line-height:2;
+    color:#e5e7eb;
+    font-weight:bold;
+  ">
+    📍 APK selling ✅<br>
+    🌍 web desing 📉<br>
+    🔨 bug bot deploying📵<br>
+    🔥 spam numbers 🔒<br>
+    🔒link to link 10k+<br>
+  </p>
+
+  <!-- SMALL TEXT -->
+  <p style="
+    font-size:13px;
+    color:#9ca3af;
+    margin-top:15px;
+    letter-spacing:1px;
+  ">
+    ⚒ Powered by Shashen Ayantha
+  </p>
+
+</div>
+
+<style>
+@keyframes borderGlow {
+  0% { border-color: rgba(79,70,229,0.2); }
+  50% { border-color: rgba(79,70,229,0.6); }
+  100% { border-color: rgba(79,70,229,0.2); }
+}
+
+@keyframes textGlow {
+  0% { text-shadow: 0 0 5px #facc15, 0 0 10px #4f46e5; }
+  50% { text-shadow: 0 0 10px #facc15, 0 0 20px #22d3ee; }
+  100% { text-shadow: 0 0 5px #facc15, 0 0 10px #4f46e5; }
+}
+</style>
+<!-- ===== PROFILE STATUS – Supiri Style ===== -->
+<div style="
+  max-width:300px;
+  margin:30px auto;
+  padding:20px;
+  text-align:center;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  border-radius:25px;
+  box-shadow:0 10px 20px rgba(0,0,0,0.5);
+  color:white;
+  font-family:Arial, sans-serif;
+  position:relative;
+">
+
+  <!-- Profile Image -->
+  <img src="https://i.ibb.co/FLKNKhBp/Rashmika-Ofc.jpg" 
+       alt="Profile" 
+       style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:4px solid #4f46e5; margin-bottom:15px; box-shadow:0 5px 15px rgba(0,0,0,0.3);">
+
+  <!-- Name -->
+  <h2 style="margin:5px 0; font-size:22px; font-weight:bold; text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">
+    Shashen Ayantha
+  </h2>
+
+  <!-- Online Status -->
+  <p style="
+    font-size:14px;
+    font-weight:bold;
+    color:#22c55e;
+    text-shadow:0 0 6px #22c55e;
+    margin-bottom:10px;
+  ">
+    ● Online
+  </p>
+
+  <!-- Extra Info -->
+  <p style="font-size:13px; color:#cbd5e1; line-height:1.6;">
+    Active Now • Viewing Tools • Fast Response ⚡
+  </p>
+
+</div>
+<script>
+function addChannel(){
+  let name = document.getElementById("adminName").value;
+  let link = document.getElementById("adminLink").value;
+
+  if(name === "" || link === ""){
+    alert("Fill all fields!");
+    return;
+  }
+
+  channels.push({
+    name:name,
+    link:link,
+    category:"gaming"
+  });
+
+  localStorage.setItem("channels", JSON.stringify(channels));
+
+  showChannels();
+
+  alert("Channel Added!");
+
+  document.getElementById("adminName").value="";
+  document.getElementById("adminLink").value="";
+}
+</script>
+<!-- 🎵 Background Music -->
+<audio id="bgMusic" loop>
+  <source src="https://fundamental-ivory-5s5kamqn2o.edgeone.app/Aasa%20Kooda%20Sai%20Abhyankkar%20128%20Kbps.mp3" type="audio/mpeg">
+</audio>
+<!-- 🔘 Music ON/OFF Button -->
+<button id="musicToggle" style="
+position:fixed;
+bottom:80px;
+right:20px;
+padding:12px 18px;
+border:none;
+border-radius:25px;
+background:linear-gradient(135deg,#22c55e,#4f46e5);
+color:white;
+font-weight:bold;
+font-size:16px;
+cursor:pointer;
+box-shadow:0 5px 15px rgba(0,0,0,0.4);
+z-index:999;
+">
+🎵 Music ON
+</button>
+<script>
+let music = document.getElementById("bgMusic");
+let toggleBtn = document.getElementById("musicToggle");
+let isPlaying = false;
+
+// First click ekedi auto play (browser safe)
+document.addEventListener("click", function(){
+  if(!isPlaying){
+    music.play();
+    isPlaying = true;
+    toggleBtn.innerText = "🎵 Music ON";
+  }
+}, { once:true });
+
+// ON / OFF button toggle function
+toggleBtn.addEventListener("click", function(){
+  if(music.paused){
+    music.play();
+    toggleBtn.innerText = "🎵 Music ON";
+  } else {
+    music.pause();
+    toggleBtn.innerText = "🎵 Music OFF";
+  }
+});
+
+// Tab change → pause/play
+document.addEventListener("visibilitychange", function(){
+  if(document.hidden){
+    music.pause();
+    toggleBtn.innerText = "🎵 Music OFF";
+  } else if(isPlaying){
+    music.play();
+    toggleBtn.innerText = "🎵 Music ON";
+  }
+});
+</script>
